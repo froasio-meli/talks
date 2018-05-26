@@ -4,4 +4,10 @@ Golang concurrency model and some useful patterns
 
 Federico Roasio - Mercadolibre
 
-* Index
+* Contents
+
+- Go's philosofy on concurrency
+- Building blocks 
+- Patterns
+- Real world examples
+- Hands on
