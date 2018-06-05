@@ -20,7 +20,7 @@ _Concurrency is the composition of independently executing processes, while para
 
 : Concurrency is about dealing with lots of things at once. Parallelism is about doing lots of things at once. Dijkstra was a pioneer in the field arround 1965, one of the firsts dealing with concepts like mutual exclusion.
 
-** Concurrency models in Go
+* Concurrency models in Go
 
 - Shared memory multithreading
 - Communicating Sequential Processes
@@ -29,7 +29,7 @@ _Share memory by communicating, don't communicate by sharing memory._
 
 : CSP is a model of concurrency in which values are passed (using channels) between independent activities (goroutines) but variables are for the most part confined to a single activity
 
-*** So which should you use?
+* So which should you use?
 
 - Traditional primitives: Performance critical sections, guard internal state.
 - Channels: Transfer ownership of data, coordinating multiple pieces of logic, distributing units of work.
