@@ -18,25 +18,110 @@ Federico Roasio - Mercadolibre
 
 "Concurrency is the composition of independently executing processes, while parallelism is the simultaneous execution of (possibly related) computations"
 
-: Concurrency is about dealing with lots of things at once. Parallelism is about doing lots of things at once. Dijkstra was a pioneer in the field arround 1965, one of the firsts dealing with concepts like mutual exclusion.
+Concurrency provides a way to structure a solution to solve a problem that may be parallelizable, but not necessarily.
 
-* Concurrency models in Go
+Concurrency is about dealing with lots of things at once. Parallelism is about doing lots of things at once. Dijkstra was a pioneer in the field arround 1965, one of the firsts dealing with concepts like mutual exclusion.
 
-- Shared memory multithreading
-- Communicating Sequential Processes
+Parallelism is a property of the runtime of our program, not the code.
+
+* Synchronization
+
+- Shared memory synchronization
+- Communicating Sequential Processes (CSP)
+
+CSP is the name of a paper that Tony Hoare published in 1978 in the ACM.
+
+CSP is a model of concurrency in which values are passed (using channels) between independent activities (goroutines) but variables are for the most part confined to a single activity. 
 
 "Share memory by communicating, don't communicate by sharing memory."
 
-: CSP is a model of concurrency in which values are passed (using channels) between independent activities (goroutines) but variables are for the most part confined to a single activity
-
-* So which should you use?
+* Which model should you use?
 
 - Traditional primitives: Performance critical sections, guard internal state.
-- Channels: Transfer ownership of data, coordinating multiple pieces of logic, distributing units of work.
+- CSP: Transfer ownership of data, coordinating multiple pieces of logic, distributing units of work.
 
-: Use whichever is most expressive and/or most simple.
+Use whichever is most expressive and/or most simple.
 
-* Building blocks 
+* Building blocks
+
+* Goroutines
+
+A goroutine is a function that is running concurrently alongside other code.
+
+Every Go program has at least one goroutine: the main goroutine, which is automatically created and started when the process begins. 
+
+.play ex1.go
+
+* Goroutines
+
+.play ex2.go
+
+* Goroutines
+
+.play ex3.go
+
+* Are goroutines like threads?
+
+Nop.
+
+A goroutine starts life with a small stack, typically 2KB. It can grow and shrink as needed.
+
+Goroutines are schedulled by the runtime in userspace using an M:N scheduller. It multiplexes (or schedules) M goroutines on N OS threads.
+
+Goroutines are nonpreemptive. They have multiple points throughout which allow for suspension or reentry. Cooperative schedulling.
+
+Context switch is faster because the runtime can be more selective in what is persisted for retrieval, how it is persisted, and when the persisting need occur.
+
+Lihgtweight, fast context switching, optimized time sharing. You can have millions of goroutines running concurrently.
+
+* Fork-Join Model
+
+.image ForkJoin.png
+
+* Synchronization
+
+- Channels
+- Select
+- Sync Package
+
+* Channels
+
+A channel is a conduit for values of a particular type. They let a goroutine send values to another goroutine.
+
+Create a channel:
+
+	ch := make(chan int)
+
+A channel is a reference to the datastructure created by make.
+
+The zero value of a channel is nil.
+
+The three available operations over channels are *send*, *receive* and *close*.
+
+	ch <- x  // a send statement
+    x = <-ch // a receive expression in an assignment statement
+    <-ch     // a receive statement; result is discarded
+	close(ch)
+	x, ok := <-ch // a receive operation that checks if the channel was closed
+
+* Channels rules
+
+- A send blocks until another goroutine executes a receive
+- A receive blocks until another goroutines performs a send 
+- A send to a nil channel blocks forever
+- A receive from a nil channel blocks forever
+- A send to a closed channel panics
+- A receive from a closed channel returns the zero value immediately
+
+* Channels
+
+- Examples
+- Range over channel
+- Unbuffered and buffered channels
+
+* Concurrency common problems
+
+: Deadlocks, Starvation, Race conditions
 
 * Patterns
 
@@ -44,3 +129,6 @@ Federico Roasio - Mercadolibre
 
 * Hands on
 
+* Sources
+
+- https://dave.cheney.net/2014/03/19/channel-axioms
