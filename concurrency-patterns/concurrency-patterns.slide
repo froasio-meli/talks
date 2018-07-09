@@ -112,12 +112,81 @@ The three available operations over channels are *send*, *receive* and *close*.
 - A receive from a nil channel blocks forever
 - A send to a closed channel panics
 - A receive from a closed channel returns the zero value immediately
+- A closed on an already closed channel panics
+
+* Channels
+
+The *range* keyword used in conjunction with the for statement supports channels as argument. The loop will be automatically broken when the iterated channel is closed.
+
+.play ex4.go
+
+* Buffered Channels
+
+A buffered channel has a queue of elements. 
+
+	ch := make(chan int, 3)
+	len(ch) // Length
+	cap(ch) // Capacity
+
+.play ex5.go
+
+* Buffered Channels
+
+- A send on a full channel blocks
+- A receive on an empty channel blocks
+- A read on a closed buffered channel succeds until the channel is drained, then returns the default value
+
+Useful when
+
+- Number of goroutines launched is known
+- Want to limit the number of goroutines that will be launched or the amount of work that is queued up
+
+*Warning*: Don't overuse, could hide deadlocks. "Queues Don't Fix Overload"
+
+* Unidirectional Channels
+
+They allow to distinguish between goroutines that own channels and those that only utilize them.
+
+Send only: allows sends but not receives
+
+	chan<- int
+
+Receive only: allows receives but not sends
+
+	<-chan int
+
+Violations to this rule are detected at compile time. 
+
+Bidirectional channels can be converted to unidirectional channels. Going back is not possible.
+
+* Unidirectional Channels
+
+.play ex6.go
+
+* Select
+
+	select { 
+		case <-ch1:
+		    // ...
+		case x := <-ch2:
+		    // ...use x...
+		case ch3 <- y:
+		    // ...
+		default:
+		// ... 
+	}
+
+- Receive and send operations are considered simultaneously to check if any of them is ready
+- A channel is ready if receive and/or send could be performed without blocking
+- If multiple cases are ready, select picks one at random, the others do not happen
+- If none of the channels are ready, the entire select statement blocks until one of them is ready again
+- Optional default clause is executed if any channel is ready
 
 * Channels
 
 - Examples
-- Range over channel
-- Unbuffered and buffered channels
+
+* Sync package
 
 * Concurrency common problems
 
@@ -132,3 +201,4 @@ The three available operations over channels are *send*, *receive* and *close*.
 * Sources
 
 - https://dave.cheney.net/2014/03/19/channel-axioms
+- https://ferd.ca/queues-don-t-fix-overload.html
